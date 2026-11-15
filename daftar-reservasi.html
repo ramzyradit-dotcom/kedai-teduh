@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daftar Reservasi — Kedai Teduh</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">☕ Kedai Teduh</a>
+      <nav aria-label="Navigasi utama">
+        <ul>
+          <li><a href="index.html">Beranda</a></li>
+          <li><a href="menu.html">Menu</a></li>
+          <li><a href="paket.html">Paket Hemat</a></li>
+          <li><a href="reservasi.html">Reservasi</a></li>
+          <li><a href="daftar-reservasi.html" aria-current="page">Daftar Reservasi</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Daftar Reservasi</h1>
+        <p>Semua tamu yang sudah memesan meja, diurutkan dari jadwal paling dekat.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="ringkasan">
+          <div class="card">
+            <p>Jumlah reservasi</p>
+            <span class="angka" id="total-reservasi">0</span>
+          </div>
+          <div class="card">
+            <p>Total tamu</p>
+            <span class="angka" id="total-tamu">0</span>
+          </div>
+        </div>
+
+        <div class="tabel-wrap">
+          <table class="tabel-daftar">
+            <caption>Data reservasi meja</caption>
+            <thead>
+              <tr>
+                <th scope="col">No</th>
+                <th scope="col">Nama</th>
+                <th scope="col">WhatsApp</th>
+                <th scope="col">Tanggal</th>
+                <th scope="col">Jam</th>
+                <th scope="col">Orang</th>
+                <th scope="col">Area duduk</th>
+                <th scope="col">Paket</th>
+                <th scope="col">Catatan</th>
+                <th scope="col">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="isi-tabel"></tbody>
+          </table>
+        </div>
+
+        <p id="kosong">Belum ada reservasi. <a href="reservasi.html">Buat reservasi pertama</a>.</p>
+        <button type="button" class="btn btn-outline" id="hapus-semua">Hapus Semua Data</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Kedai Teduh — Proyek UTS Pemrograman Web</p>
+  </footer>
+
+  <script>
+    const tbody = document.getElementById("isi-tabel");
+
+    function ambilData() {
+      return JSON.parse(localStorage.getItem("daftarReservasi") || "[]");
+    }
+
+    function simpanData(daftar) {
+      localStorage.setItem("daftarReservasi", JSON.stringify(daftar));
+    }
+
+    function tampilkan() {
+      const daftar = ambilData();
+
+      // Urutkan berdasarkan tanggal lalu jam
+      daftar.sort(function (a, b) {
+        return (a.tanggal + a.jam).localeCompare(b.tanggal + b.jam);
+      });
+
+      tbody.innerHTML = "";
+      let totalTamu = 0;
+
+      daftar.forEach(function (r, i) {
+        const tr = document.createElement("tr");
+        // Tanggal ditampilkan singkat, contoh: "Jum, 20 Nov 2026"
+        const tanggal = new Date(r.tanggal + "T00:00").toLocaleDateString("id-ID", {
+          weekday: "short", day: "numeric", month: "short", year: "numeric"
+        });
+        const paket = r.paket.split(" — ")[0];   // "Paket Berdua — Rp45.000" → "Paket Berdua"
+        const isi = [i + 1, r.nama, r.wa, tanggal, r.jam, r.jumlah, r.area, paket, r.catatan || "-"];
+
+        // textContent dipakai agar isian pengguna tidak dijalankan sebagai HTML
+        isi.forEach(function (nilai) {
+          const td = document.createElement("td");
+          td.textContent = nilai;
+          tr.appendChild(td);
+        });
+
+        // Tombol hapus per baris
+        const tdAksi = document.createElement("td");
+        const tombol = document.createElement("button");
+        tombol.type = "button";
+        tombol.className = "btn-kecil";
+        tombol.textContent = "Hapus";
+        tombol.setAttribute("aria-label", "Hapus reservasi " + r.nama);
+        tombol.addEventListener("click", function () {
+          daftar.splice(i, 1);
+          simpanData(daftar);
+          tampilkan();
+        });
+        tdAksi.appendChild(tombol);
+        tr.appendChild(tdAksi);
+
+        tbody.appendChild(tr);
+        totalTamu += Number(r.jumlah);
+      });
+
+      document.getElementById("total-reservasi").textContent = daftar.length;
+      document.getElementById("total-tamu").textContent = totalTamu;
+      document.getElementById("kosong").hidden = daftar.length > 0;
+    }
+
+    document.getElementById("hapus-semua").addEventListener("click", function () {
+      if (confirm("Yakin hapus semua data reservasi?")) {
+        localStorage.removeItem("daftarReservasi");
+        tampilkan();
+      }
+    });
+
+    tampilkan();
+  </script>
+</body>
+</html>

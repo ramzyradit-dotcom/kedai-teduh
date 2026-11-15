@@ -1,0 +1,35 @@
+/* ============================================================
+   custom-bootstrap.css — Topik 7: kustomisasi Bootstrap
+   Dimuat SETELAH bootstrap.min.css sehingga menimpa bawaannya.
+   ============================================================ */
+
+/* 1. Ganti variabel warna & bentuk bawaan Bootstrap */
+:root {
+  --bs-primary: #9c4514;
+  --bs-primary-rgb: 156, 69, 20;
+  --bs-body-bg: #fbf7f0;
+  --bs-tertiary-bg: #f3e8d9;
+  --bs-border-radius: 12px;
+  --bs-link-color-rgb: 156, 69, 20;
+}
+
+/* 2. Ganti warna tombol primary */
+.btn-primary {
+  --bs-btn-bg: #9c4514;
+  --bs-btn-border-color: #9c4514;
+  --bs-btn-hover-bg: #3b2418;
+  --bs-btn-hover-border-color: #3b2418;
+}
+.btn-outline-primary {
+  --bs-btn-color: #9c4514;
+  --bs-btn-border-color: #9c4514;
+  --bs-btn-hover-bg: #9c4514;
+  --bs-btn-hover-border-color: #9c4514;
+}
+
+/* 3. Class buatan sendiri */
+.bg-kopi { background-color: #3b2418; color: #f3e8d9; }
+.navbar .nav-link.active { background: #9c4514; border-radius: 8px; }
+h1, h2 { font-family: Georgia, serif; }
+.card { border-top: 4px solid #9c4514; }
+.harga { font-size: 1.6rem; font-weight: bold; color: #9c4514; }
